@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "fresh-list-component-client-side-solution",
+    "id": "a30f578a-1cae-4e58-915b-5fd0103def45",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.14.0"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "fresh-list-component description"
+      },
+      "longDescription": {
+        "default": "fresh-list-component description"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "fresh-list-component Feature",
+        "description": "The feature that activates elements of the fresh-list-component solution.",
+        "id": "2a5cf2b5-8d61-470a-af19-406552540c57",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/fresh-list-component.sppkg"
+  }
+}
