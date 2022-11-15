@@ -9,14 +9,17 @@ import "@pnp/sp/items";
 import { Toolbar } from '@pnp/spfx-controls-react/lib/Toolbar';
 import { DefaultButton, PrimaryButton } from '@fluentui/react/lib/Button';
 import { Panel } from '@fluentui/react/lib/Panel';
-import { useBoolean } from '@fluentui/react-hooks';
 import { ListView, IViewField, SelectionMode, GroupOrder, IGrouping } from "@pnp/spfx-controls-react/lib/ListView";
 import * as _ from 'lodash';
 import { DisplayMode } from '@microsoft/sp-core-library';
 import { DynamicForm } from "@pnp/spfx-controls-react/lib/DynamicForm";
 import { WebPartTitle } from "@pnp/spfx-controls-react/lib/WebPartTitle";
 import { Placeholder } from "@pnp/spfx-controls-react/lib/Placeholder";
-import { Pagination } from "@pnp/spfx-controls-react/lib/pagination";
+// import { Pagination } from "@pnp/spfx-controls-react/lib/pagination";
+import { Label, Pivot, PivotItem } from '@fluentui/react';
+import { ThemeProvider, PartialTheme } from '@fluentui/react/lib/Theme';
+
+
 
 
 
@@ -37,6 +40,44 @@ export default class FreshList extends React.Component<IFreshListProps, {}> {
   // variables of webpart title
   public displayMode: DisplayMode;
   public updateProperty: (value: string) => void;
+
+
+
+
+  /******************************************** Theme of webpart **********************************************/
+  // Primary theme
+  public theme_ThemeDarker: PartialTheme = {
+    semanticColors: {
+      bodyBackground: '#0078d7',
+      bodyText: 'white',
+    },
+  };
+
+  // Secondary theme
+  public theme_yellowDark: PartialTheme = {
+    semanticColors: {
+      bodyBackground: '#666666',
+      bodyText: 'white',
+    },
+  };
+  
+  // Dark theme
+  public theme_darkTheme: PartialTheme = {
+    semanticColors: {
+      bodyBackground: 'black',
+      bodyText: 'white',
+    },
+  };
+
+  // White theme
+  public theme_white: PartialTheme = {
+    semanticColors: {
+      bodyBackground: 'white',
+      bodyText: 'black',
+    },
+  };
+
+  /*************************************************************************************************************/ 
 
 
 
@@ -138,11 +179,6 @@ export default class FreshList extends React.Component<IFreshListProps, {}> {
   };
 
 
-  // private _getPage(page: number){
-  //   console.log('Page:', page);
-  // }
-
-
 
   // Action buttons of Toolbar before select Item in list
   public BeforeSelected = {
@@ -164,6 +200,8 @@ export default class FreshList extends React.Component<IFreshListProps, {}> {
       }
     }
   };
+
+
   
 
   // open and close Add panel
@@ -174,6 +212,8 @@ export default class FreshList extends React.Component<IFreshListProps, {}> {
       location.reload()
     }
   };
+
+
 
 
   // open and close update panel
@@ -189,11 +229,34 @@ export default class FreshList extends React.Component<IFreshListProps, {}> {
     }
   };
 
+
+
+
   // open webpart property pane if one of data doesn't exist
   private _onConfigure = () => {
     // Context of the web part
     this.props.context.propertyPane.open();
   };
+
+
+  private themeColor = () => {
+    if (this.props.themeID === 1){
+      return this.theme_white
+    }
+    if (this.props.themeID === 2){
+      return this.theme_ThemeDarker
+    }
+    if (this.props.themeID === 3){
+      return this.theme_darkTheme
+    }
+    if (this.props.themeID === 4){
+      return this.theme_yellowDark
+    }
+    return this.theme_white
+  }
+
+
+
 
   // initialise the state
   componentDidMount(): void {
@@ -203,6 +266,9 @@ export default class FreshList extends React.Component<IFreshListProps, {}> {
     // get the ID of the list
     this.getListID(this.props.listName);
   };
+
+
+
 
 
   // the name of Add item property pane 
@@ -234,8 +300,10 @@ export default class FreshList extends React.Component<IFreshListProps, {}> {
       columnSelected,
       listName,
       context,
+      themeID,
     } = this.props;
 
+    // test properties are completed or no
     if ((listUrlAPI === undefined) || (columnSelected === undefined) || (listName === undefined) || (numberOfElement === undefined)){
       return(
         <Placeholder iconName='Edit'
@@ -247,89 +315,84 @@ export default class FreshList extends React.Component<IFreshListProps, {}> {
       );
     }else {
       return (
-        <section className={`${styles.freshList} ${hasTeamsContext ? styles.teams : ''}`}>
-  
-          {console.log(this.state.itemID)}
-          {/* toolbar of web component  */}
-            <WebPartTitle 
-              displayMode={this.displayMode}
-              title={webPartName}
-              updateProperty={this.updateProperty} 
-            />
-          {/* ************************* */}
-  
+        <ThemeProvider theme={this.themeColor()}>
+          <section className={`${styles.freshList} ${hasTeamsContext ? styles.teams : ''}`}>
+            <br></br>
+            {/* toolbar of web component  */}
+              <WebPartTitle 
+                displayMode={this.displayMode}
+                title={webPartName}
+                updateProperty={this.updateProperty} 
+              />
+              <h2>{this.displayMode}</h2>
+            {/* ************************* */}
+    
 
-          {/* toolbar of web component  */}
-            <Toolbar actionGroups={this.BeforeSelected}/>
-          {/* ************************* */}
-  
-  
-          {/* First panel for add new item to the list */}
-            <ListView
-              items={this.state.data}
-              compact={false}
-              selectionMode={SelectionMode.single}
-              selection={this._getSelection}
-              stickyHeader={true}
+            {/* toolbar of web component  */}
+              <Toolbar actionGroups={this.BeforeSelected}/>
+            {/* ************************* */}
+    
+    
+            {/* First panel for add new item to the list */}
+              <ListView
+                items={this.state.data}
+                compact={false}
+                selectionMode={SelectionMode.single}
+                selection={this._getSelection}
+                stickyHeader={true}
 
-            />
-          {/* ***************************************** */}
-          
-  
-          {/* First panel for add new item to the list */}
-            <Panel
-              headerText={this.propertiePaneAddName}
-              isOpen={this.state.openAddPanel}
-              closeButtonAriaLabel="Close"
-              isFooterAtBottom={true}
-              onDismiss={() => this.openAddPanel()}>
-              <h3>New item.</h3>
-  
-              {/* add new item form */}
-              <DynamicForm
-                key={this.state.listID} 
-                context={this.props.context} 
-                listId={this.state.listID}>
-              </DynamicForm>
-              {/* ****************** */}
-  
-            </Panel>
-          {/* ****************************************** */}
-  
-  
-          {/* Second panel for update item in the list */}
-            <Panel
-              headerText={this.propertiePaneAddName}
-              isOpen={this.state.openUpdatePanel}
-              closeButtonAriaLabel="Close"
-              isFooterAtBottom={true}
-              onDismiss={() => this.openUpdatePanel()}>
-              <h3>Update item.</h3>
-  
-              {/* update item form */}
-              <DynamicForm
-                key={this.state.listID} 
-                context={this.props.context} 
-                listId={this.state.listID}
-                listItemId={this.state.itemID}  >
-              </DynamicForm>
-              {/* ****************** */}
-  
-            </Panel>
-          {/* ****************************************** */}
+              />
+            {/* ***************************************** */}
+            
+    
+            {/* First panel for add new item to the list */}
+              <Panel
+                headerText={this.propertiePaneAddName}
+                isOpen={this.state.openAddPanel}
+                closeButtonAriaLabel="Close"
+                isFooterAtBottom={true}
+                onDismiss={() => this.openAddPanel()}>
+                <h3>New item.</h3>
+    
+                {/* add new item form */}
+                <DynamicForm
+                  key={this.state.listID} 
+                  context={this.props.context} 
+                  listId={this.state.listID}>
+                </DynamicForm>
+                {/* ****************** */}
+    
+              </Panel>
+            {/* ****************************************** */}
+    
+    
+            {/* Second panel for update item in the list */}
+              <Panel
+                headerText={this.propertiePaneAddName}
+                isOpen={this.state.openUpdatePanel}
+                closeButtonAriaLabel="Close"
+                isFooterAtBottom={true}
+                onDismiss={() => this.openUpdatePanel()}>
+                <h3>Update item.</h3>
+    
+                {/* update item form */}
+                <DynamicForm
+                  key={this.state.listID} 
+                  context={this.props.context} 
+                  listId={this.state.listID}
+                  listItemId={this.state.itemID}  >
+                </DynamicForm>
+                {/* ****************** */}
+    
+              </Panel>
+            {/* ****************************************** */}
 
-          {/* <Pagination
-            currentPage={3}
-            totalPages={13} 
-            onChange={(page) => this._getPage(page)}
-            limiter={3} // Optional - default value 3
-            hideFirstPageJump // Optional
-            hideLastPageJump // Optional
-            limiterIcon={"Emoji12"} // Optional
-          /> */}
-          
-  
-        </section>
+            
+            
+            
+    
+          </section>
+        </ThemeProvider>
       );
     };
   };

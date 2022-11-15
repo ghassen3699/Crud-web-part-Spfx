@@ -5,6 +5,7 @@ import { Version } from '@microsoft/sp-core-library';
 import {
   IPropertyPaneConfiguration,
   PropertyPaneButton,
+  PropertyPaneDropdown,
   PropertyPaneSlider,
   PropertyPaneTextField
 } from '@microsoft/sp-property-pane';
@@ -23,6 +24,7 @@ export interface IFreshListWebPartProps {
   webPartName: string;
   columnSelected: string;
   listName: string;
+  themeID: number;
 }
 
 export default class FreshListWebPart extends BaseClientSideWebPart<IFreshListWebPartProps> {
@@ -55,6 +57,7 @@ export default class FreshListWebPart extends BaseClientSideWebPart<IFreshListWe
         columnSelected: this.properties.columnSelected,
         listName: this.properties.listName,
         context: this.context,
+        themeID: this.properties.themeID,
       }
     );
 
@@ -110,7 +113,7 @@ export default class FreshListWebPart extends BaseClientSideWebPart<IFreshListWe
       pages: [
         {
           header: {
-            description: strings.PropertyPaneDescription
+            description: "Fresh crud webpart"
           },
 
           groups: [
@@ -145,7 +148,7 @@ export default class FreshListWebPart extends BaseClientSideWebPart<IFreshListWe
               ]
             },
             {
-              groupName: "Configuration de l'ajout / modification / suppression",
+              groupName: "Configuration de l'ajout / modif / supp",
               groupFields: [
                 PropertyPaneTextField('listName', {
                   label: "Entrer le nom de votre liste"
@@ -158,7 +161,55 @@ export default class FreshListWebPart extends BaseClientSideWebPart<IFreshListWe
             
           ]
           
+        },
+        {
+          header: {
+            description: "Fresh crud webpart"
+          },
+
+          groups: [
+
+            // config of webpart name
+            {
+              groupName: 'Configuration du theme',
+              groupFields: [
+                PropertyPaneDropdown('themeID',{
+                  label: 'Choisir votre theme',
+                  selectedKey: 1,
+                  disabled: false,
+                  options:[
+                    {
+                      key:1,
+                      text:"White theme"
+                    },
+                    {
+                      key:2,
+                      text:"Primary theme"
+                    },
+                    {
+                      key:3,
+                      text:"black theme"
+                    },
+                    {
+                      key:4,
+                      text:"Secondary theme"
+                    }
+                  ]
+
+                })
+              ]
+            },
+
+            
+            
+            
+            
+            
+          ]
+          
         }
+
+        
       ]
     };
   }

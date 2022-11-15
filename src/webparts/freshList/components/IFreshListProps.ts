@@ -11,6 +11,7 @@ export interface IFreshListProps {
   columnSelected: string;
   listName: string;
   context: any;
+  themeID: number;
 }
 
 
